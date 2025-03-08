@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify
 import openai  # Correct import
 import os
+from openai import OpenAI
 
 app = Flask(__name__)
 
@@ -9,8 +10,8 @@ app = Flask(__name__)
 def home():
     return jsonify({"message": "Welcome to NeoScholar API! Use /generate-content to get study notes."})
 
-# Use environment variable for API key
-openai.api_key = os.getenv("OPENAI_API_KEY")
+# Initialize OpenAI client
+client = OpenAI()
 
 @app.route("/generate-content", methods=["POST"])
 def generate_content():
@@ -48,12 +49,13 @@ def generate_content():
     """
 
     try:
-        response = openai.ChatCompletion.create(
+        # Corrected OpenAI API usage
+        response = client.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=[{"role": "user", "content": prompt}]
         )
 
-        content_generated = response["choices"][0]["message"]["content"].strip()
+        content_generated = response.choices[0].message.content.strip()
 
         return jsonify({
             "title": f"{mode} Notes for {topic}",
