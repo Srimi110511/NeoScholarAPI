@@ -1,7 +1,6 @@
 from flask import Flask, request, jsonify
-import openai
+import openai  # Correct import
 import os
-from openai import OpenAI
 
 app = Flask(__name__)
 
@@ -10,9 +9,9 @@ app = Flask(__name__)
 def home():
     return jsonify({"message": "Welcome to NeoScholar API! Use /generate-content to get study notes."})
 
-# Initialize OpenAI client with the API key from environment variables
-api_key = os.getenv("OPENAI_API_KEY")
-client = OpenAI(api_key=api_key)
+# Initialize OpenAI client (NEW SYNTAX for OpenAI >= 1.0.0)
+from openai import OpenAI
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 @app.route("/generate-content", methods=["POST"])
 def generate_content():
@@ -20,6 +19,7 @@ def generate_content():
     topic = data.get("topic", "No topic provided")
     mode = data.get("mode", "Comprehensive")
 
+    # 🔹 Improved Prompt for Better Content Structure
     prompt = f"""
     Generate a structured {mode.lower()} study guide for '{topic}'.  
     The guide should include the following sections:
