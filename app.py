@@ -4,6 +4,11 @@ import os
 
 app = Flask(__name__)
 
+# Home Route to Fix 404 Error
+@app.route("/", methods=["GET"])
+def home():
+    return jsonify({"message": "Welcome to NeoScholar API! Use /generate-content to get study notes."})
+
 # Use environment variable for API key
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
@@ -43,7 +48,6 @@ def generate_content():
     """
 
     try:
-        # Use the correct OpenAI API method for chat completion
         response = openai.ChatCompletion.create(
             model="gpt-3.5-turbo",
             messages=[{"role": "user", "content": prompt}]
